@@ -3,7 +3,8 @@ export type ValidatorType = 'str' | 'num' | 'bool' | 'url' | 'port' | 'email' | 
 export interface BaseOptions {
   default?: unknown
   optional?: boolean
-  required?: boolean | string
+  required?: boolean
+  description?: string | string
 }
 
 export interface StrOptions extends BaseOptions {
