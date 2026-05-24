@@ -1,6 +1,6 @@
 {
   "name": "@jadendev/envault",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "The last env validation library you'll ever need. Zero dependencies, full TypeScript inference, multi-env loading, and a CLI that buries everything else.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
