@@ -5,7 +5,7 @@ import type { SchemaShape, ResolvedSchema } from '../types.js'
 export {
   str, num, bool, url, port, email, json, list, uuid, secret, date, phone,
   semver, ip, hex, enm, presets,
-  envIsDev, envIsProd,
+  envIsDev, envIsProd, envIsTest, envIsStaging,
 } from '../index.js'
 export type { InferEnv } from '../types.js'
 

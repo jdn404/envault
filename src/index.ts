@@ -43,15 +43,10 @@ function isProduction(): boolean {
   return process.env.NODE_ENV === 'production'
 }
 
-export function env_isDevelopment(): boolean { return isDevelopment() }
-export function env_isProduction(): boolean  { return isProduction() }
-export function env_isTest(): boolean        { return process.env.NODE_ENV === 'test' }
-export function env_isStaging(): boolean     { return process.env.NODE_ENV === 'staging' }
-
-export {
-  isDevelopment as envIsDev,
-  isProduction as envIsProd,
-}
+export function envIsDev(): boolean     { return isDevelopment() }
+export function envIsProd(): boolean    { return isProduction() }
+export function envIsTest(): boolean    { return process.env.NODE_ENV === 'test' }
+export function envIsStaging(): boolean { return process.env.NODE_ENV === 'staging' }
 
 function applyConditionalRules(
   rules: ConditionalRule[],

@@ -452,7 +452,7 @@ const env = envault({
 No more `process.env.NODE_ENV === 'production'` scattered across your codebase:
 
 ```ts
-import { envIsDev, envIsProd } from '@jadendev/envault'
+import { envIsDev, envIsProd, envIsTest, envIsStaging } from '@jadendev/envault'
 
 if (envIsDev()) {
   enableDebugLogging()
@@ -463,7 +463,7 @@ if (envIsProd()) {
 }
 ```
 
-Also available: `env_isTest()`, `env_isStaging()`.
+Also available: `envIsTest()`, `envIsStaging()`.
 
 <br />
 </details>
@@ -817,8 +817,8 @@ import {
 }                                             from '@jadendev/envault'
 
 // Helpers
-import { envIsDev, envIsProd }               from '@jadendev/envault'
-import { env_isTest, env_isStaging }         from '@jadendev/envault'
+import { envIsDev, envIsProd, envIsTest, envIsStaging }               from '@jadendev/envault'
+import { envIsTest, envIsStaging }              from '@jadendev/envault'
 
 // Types
 import type { InferEnv, EnvaultOptions,
