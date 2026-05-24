@@ -6,7 +6,7 @@
 
 <div align="center">
 
-[![npm](https://img.shields.io/badge/%40jadendev%2Fenvault-1.0.3-22c55e?style=for-the-badge&logo=npm&logoColor=white&labelColor=09090b)](https://www.npmjs.com/package/@jadendev/envault)
+[![npm](https://img.shields.io/badge/%40jadendev%2Fenvault-1.0.5-22c55e?style=for-the-badge&logo=npm&logoColor=white&labelColor=09090b)](https://www.npmjs.com/package/@jadendev/envault)
 &nbsp;
 ![zero deps](https://img.shields.io/badge/zero_dependencies-09090b?style=for-the-badge&logo=nodedotjs&logoColor=22c55e)
 &nbsp;
