@@ -1,27 +1,27 @@
 import { loadEnvFiles } from './loader.js'
 import { validateSchema, collectSchemaEnvKeys } from './validator.js'
-import { formatErrors, formatWarnings } from './reporter.js'
+import { formatErrors, formatErrorsJson, formatErrorsMinimal, formatWarnings } from './reporter.js'
 import type {
-  FieldSpec,
-  SchemaShape,
-  ResolvedSchema,
-  EnvaultOptions,
-  EnvRecord,
-  ValidationError,
-  ConditionalRule,
-  CrossFieldRule,
+  FieldSpec, SchemaShape, ResolvedSchema, EnvaultOptions, EnvRecord,
+  ValidationError, ConditionalRule, CrossFieldRule,
 } from './types.js'
 
 export {
-  str, num, bool, url, port, email, json, list, uuid, secret, date, phone, semver, ip, hex, enm,
+  str, num, bool, url, port, email, json, list, uuid, secret, date, phone,
+  semver, ip, hex, cidr, jwt, base64, slug, locale, timezone, cron, duration,
+  filepath, hash, creditcard, iban, latitude, longitude, country, currency,
+  mimetype, enm,
 } from './validators/index.js'
 export { presets } from './presets.js'
 export type {
   StrOptions, NumOptions, BoolOptions, UrlOptions, PortOptions, EmailOptions,
   JsonOptions, ListOptions, UuidOptions, SecretOptions, DateOptions, PhoneOptions,
-  SemverOptions, IpOptions, HexOptions,
+  SemverOptions, IpOptions, HexOptions, CidrOptions, JwtOptions, Base64Options,
+  SlugOptions, LocaleOptions, TimezoneOptions, CronOptions, DurationOptions,
+  FilepathOptions, HashOptions, CreditCardOptions, IbanOptions, LatitudeOptions,
+  LongitudeOptions, CountryOptions, CurrencyOptions, MimeTypeOptions,
   EnvaultOptions, ValidationError, ConditionalRule, CrossFieldRule, EnvRecord,
-  InferEnv,
+  InferEnv, WatchEvent, DocsOptions,
 } from './types.js'
 
 const SYSTEM_ENV_KEYS = new Set([
@@ -32,6 +32,7 @@ const SYSTEM_ENV_KEYS = new Set([
   'COMPUTERNAME', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA', 'SYSTEMROOT',
   'PROCESSOR_ARCHITECTURE', 'NUMBER_OF_PROCESSORS', 'OS', 'COMSPEC',
   'PATHEXT', 'WINDIR', 'PROGRAMFILES', 'ALLUSERSPROFILE',
+  'WT_SESSION', 'WT_PROFILE_ID', 'WSLENV', 'WSL_DISTRO_NAME',
 ])
 
 function isDevelopment(): boolean {
@@ -39,9 +40,7 @@ function isDevelopment(): boolean {
   return !e || e === 'development' || e === 'dev' || e === 'test'
 }
 
-function isProduction(): boolean {
-  return process.env.NODE_ENV === 'production'
-}
+function isProduction(): boolean { return process.env.NODE_ENV === 'production' }
 
 export function envIsDev(): boolean     { return isDevelopment() }
 export function envIsProd(): boolean    { return isProduction() }
@@ -75,19 +74,17 @@ function applyCrossFieldRules(
     const values: EnvRecord = {}
     for (const field of rule.fields) values[field] = result[field]
     const msg = rule.validate(values)
-    if (msg !== null) {
-      errors.push({ key: rule.fields.join(', '), message: msg })
-    }
+    if (msg !== null) errors.push({ key: rule.fields.join(', '), message: msg })
   }
   return errors
 }
 
 function handleErrors(errors: ValidationError[], options: EnvaultOptions): void {
-  if (options.onError) {
-    options.onError(errors)
-    return
-  }
-  const msg = formatErrors(errors)
+  if (options.onError) { options.onError(errors); return }
+  const format = options.errorFormat ?? 'pretty'
+  const msg = format === 'json' ? formatErrorsJson(errors)
+    : format === 'minimal' ? formatErrorsMinimal(errors)
+    : formatErrors(errors)
   if (options.throws) throw new Error(msg)
   process.stderr.write(msg + '\n')
   process.exit(1)
@@ -95,9 +92,7 @@ function handleErrors(errors: ValidationError[], options: EnvaultOptions): void 
 
 function freezeDeep<T extends object>(obj: T): Readonly<T> {
   for (const val of Object.values(obj)) {
-    if (val !== null && typeof val === 'object' && !Object.isFrozen(val)) {
-      freezeDeep(val as object)
-    }
+    if (val !== null && typeof val === 'object' && !Object.isFrozen(val)) freezeDeep(val as object)
   }
   return Object.freeze(obj)
 }
@@ -125,13 +120,10 @@ export function envault<T extends SchemaShape>(
     const strictWarnings: string[] = []
     for (const key of Object.keys(env)) {
       if (
-        !schemaEnvKeys.has(key) &&
-        !SYSTEM_ENV_KEYS.has(key) &&
-        !key.startsWith('npm_') &&
-        !key.startsWith('VITE_') &&
-        !key.startsWith('NEXT_') &&
-        key !== 'NODE_ENV' &&
-        key !== 'CI'
+        !schemaEnvKeys.has(key) && !SYSTEM_ENV_KEYS.has(key) &&
+        !key.startsWith('npm_') && !key.startsWith('VITE_') &&
+        !key.startsWith('NEXT_') && !key.startsWith('REACT_APP_') &&
+        key !== 'NODE_ENV' && key !== 'CI' && key !== 'DEBUG'
       ) {
         strictWarnings.push(`strict: "${key}" is set but not declared in schema`)
       }
@@ -150,18 +142,10 @@ export function envault<T extends SchemaShape>(
   }
 
   const allErrors = [...errors]
+  if (options.rules?.length) allErrors.push(...applyConditionalRules(options.rules, result, env))
+  if (options.crossRules?.length) allErrors.push(...applyCrossFieldRules(options.crossRules, result))
 
-  if (options.rules?.length) {
-    allErrors.push(...applyConditionalRules(options.rules, result, env))
-  }
-
-  if (options.crossRules?.length) {
-    allErrors.push(...applyCrossFieldRules(options.crossRules, result))
-  }
-
-  if (allErrors.length > 0) {
-    handleErrors(allErrors, options)
-  }
+  if (allErrors.length > 0) handleErrors(allErrors, options)
 
   return freezeDeep(result as ResolvedSchema<T>)
 }

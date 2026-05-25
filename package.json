@@ -1,6 +1,6 @@
 {
   "name": "@jadendev/envault",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "The last env validation library you'll ever need. Zero dependencies, full TypeScript inference, multi-env loading, and a CLI that buries everything else.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -9,6 +9,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./presets": {
+      "types": "./dist/presets.d.ts",
+      "import": "./dist/presets.mjs",
+      "require": "./dist/presets.js"
     },
     "./next": {
       "types": "./dist/plugins/next.d.ts",
@@ -20,10 +25,45 @@
       "import": "./dist/plugins/vite.mjs",
       "require": "./dist/plugins/vite.js"
     },
-    "./presets": {
-      "types": "./dist/presets.d.ts",
-      "import": "./dist/presets.mjs",
-      "require": "./dist/presets.js"
+    "./edge": {
+      "types": "./dist/edge.d.ts",
+      "import": "./dist/edge.mjs",
+      "require": "./dist/edge.js"
+    },
+    "./crypto": {
+      "types": "./dist/crypto.d.ts",
+      "import": "./dist/crypto.mjs",
+      "require": "./dist/crypto.js"
+    },
+    "./health": {
+      "types": "./dist/health.d.ts",
+      "import": "./dist/health.mjs",
+      "require": "./dist/health.js"
+    },
+    "./docs": {
+      "types": "./dist/docs.d.ts",
+      "import": "./dist/docs.mjs",
+      "require": "./dist/docs.js"
+    },
+    "./migrate": {
+      "types": "./dist/migrate.d.ts",
+      "import": "./dist/migrate.mjs",
+      "require": "./dist/migrate.js"
+    },
+    "./monorepo": {
+      "types": "./dist/monorepo.d.ts",
+      "import": "./dist/monorepo.mjs",
+      "require": "./dist/monorepo.js"
+    },
+    "./watch": {
+      "types": "./dist/watch.d.ts",
+      "import": "./dist/watch.mjs",
+      "require": "./dist/watch.js"
+    },
+    "./onboard": {
+      "types": "./dist/onboard.d.ts",
+      "import": "./dist/onboard.mjs",
+      "require": "./dist/onboard.js"
     }
   },
   "bin": {
